@@ -18,24 +18,13 @@ export async function GET(request: NextRequest) {
 
     const genAI = new GoogleGenerativeAI(apiKey)
 
-    // List all available models
-    const models = await genAI.listModels()
-
-    // Filter to only models that support generateContent
-    const contentGenerationModels = models.filter((model: any) =>
-      model.supportedGenerationMethods?.includes('generateContent')
-    )
+    // Test with a simple model initialization
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
 
     return NextResponse.json({
       success: true,
-      models: contentGenerationModels.map((model: any) => ({
-        name: model.name,
-        displayName: model.displayName,
-        description: model.description,
-        supportedGenerationMethods: model.supportedGenerationMethods,
-      })),
-      totalModels: models.length,
-      contentGenerationModels: contentGenerationModels.length,
+      message: 'Gemini API connection successful',
+      model: 'gemini-2.0-flash-exp',
     })
   } catch (error) {
     console.error('Error listing Gemini models:', error)

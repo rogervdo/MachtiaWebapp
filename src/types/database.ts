@@ -178,3 +178,43 @@ export interface SaveLessonResponse {
   leccionId: number;
   parrafosCreated: number;
 }
+
+// ============================================================================
+// EXTENDED TYPES FOR UI
+// ============================================================================
+
+export interface ModuloWithLecciones extends Modulo {
+  lecciones?: LeccionWithContenido[];
+}
+
+export interface LeccionWithContenido extends Leccion {
+  contenido?: Contenido;
+}
+
+export interface ContenidoWithDetails extends Contenido {
+  parrafos?: Parrafo[];
+  preguntas?: Pregunta[];
+  totalWords?: number;
+}
+
+export interface CreateContenidoRequest {
+  idmodulo: number;
+  titulo: string;
+  descripcion?: string;
+  tipo: 'lesson' | 'video' | 'document' | 'quiz';
+  video_url?: string;
+  chunks?: Array<{ texto: string; position?: number }>;
+}
+
+export interface UpdateContenidoRequest {
+  titulo?: string;
+  descripcion?: string;
+  tipo?: 'lesson' | 'video' | 'document' | 'quiz';
+  video_url?: string;
+  orden?: number;
+}
+
+export interface UpdateModuloRequest {
+  titulo?: string;
+  descripcion?: string;
+}

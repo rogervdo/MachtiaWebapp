@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -9,13 +9,18 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { toast } from 'sonner'
 import { ChunkPreview } from './ChunkPreview'
-import type { ProcessedContent } from '@/types/database'
+import type { ProcessedContent, Modulo } from '@/types/database'
 
 type SourceType = 'youtube' | 'text'
 
-export default function CreateLessonView() {
+interface CreateLessonViewProps {
+  selectedModuleId?: number | null
+}
+
+export default function CreateLessonView({ selectedModuleId }: CreateLessonViewProps = {}) {
   const [sourceType, setSourceType] = useState<SourceType>('youtube')
   const [youtubeUrl, setYoutubeUrl] = useState('')
   const [manualText, setManualText] = useState('')
@@ -26,8 +31,32 @@ export default function CreateLessonView() {
   const [processedContent, setProcessedContent] = useState<ProcessedContent | null>(null)
   const [saving, setSaving] = useState(false)
   const [showSaveDialog, setShowSaveDialog] = useState(false)
+  const [modules, setModules] = useState<Modulo[]>([])
+  const [selectedModule, setSelectedModule] = useState<string>(selectedModuleId ? selectedModuleId.toString() : 'new')
   const [moduleTitle, setModuleTitle] = useState('')
   const [moduleDescription, setModuleDescription] = useState('')
+
+  useEffect(() => {
+    loadModules()
+  }, [])
+
+  useEffect(() => {
+    if (selectedModuleId) {
+      setSelectedModule(selectedModuleId.toString())
+    }
+  }, [selectedModuleId])
+
+  const loadModules = async () => {
+    try {
+      const response = await fetch('/api/modules')
+      const result = await response.json()
+      if (result.success) {
+        setModules(result.data)
+      }
+    } catch (error) {
+      console.error('Error loading modules:', error)
+    }
+  }
 
   const handleProcess = async () => {
     const sourceContent = sourceType === 'youtube' ? youtubeUrl : manualText
@@ -88,25 +117,30 @@ export default function CreateLessonView() {
   const handleSaveToDatabase = async () => {
     if (!processedContent) return
 
-    if (!moduleTitle.trim()) {
-      toast.error('Por favor ingresa un título para el módulo')
+    if (!lessonTitle.trim()) {
+      toast.error('Por favor ingresa un título para la lección')
       return
     }
 
-    if (!lessonTitle.trim()) {
-      toast.error('Por favor ingresa un título para la lección')
+    // Determine if we're using an existing module or creating a new one
+    const isNewModule = selectedModule === 'new'
+
+    if (isNewModule && !moduleTitle.trim()) {
+      toast.error('Por favor ingresa un título para el nuevo módulo')
       return
     }
 
     setSaving(true)
 
     try {
+
       const response = await fetch('/api/lessons/save', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          moduloTitulo: moduleTitle,
-          moduloDescripcion: moduleDescription || undefined,
+          moduloId: isNewModule ? undefined : parseInt(selectedModule),
+          moduloTitulo: isNewModule ? moduleTitle : undefined,
+          moduloDescripcion: isNewModule ? (moduleDescription || undefined) : undefined,
           contenidoTitulo: lessonTitle,
           contenidoDescripcion: lessonDescription || undefined,
           contenidoTipo: sourceType === 'youtube' ? 'video' : 'document',
@@ -300,24 +334,45 @@ export default function CreateLessonView() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="module-title">Título del Módulo *</Label>
-              <Input
-                id="module-title"
-                placeholder="Ej: Fundamentos de Agricultura"
-                value={moduleTitle}
-                onChange={(e) => setModuleTitle(e.target.value)}
-              />
+              <Label htmlFor="module-select">Seleccionar Módulo *</Label>
+              <Select value={selectedModule} onValueChange={setSelectedModule}>
+                <SelectTrigger id="module-select">
+                  <SelectValue placeholder="Selecciona un módulo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="new">+ Crear Nuevo Módulo</SelectItem>
+                  {modules.map((module) => (
+                    <SelectItem key={module.idmodulo} value={module.idmodulo.toString()}>
+                      {module.titulo}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="module-description">Descripción del Módulo (opcional)</Label>
-              <Textarea
-                id="module-description"
-                placeholder="Descripción general del módulo..."
-                value={moduleDescription}
-                onChange={(e) => setModuleDescription(e.target.value)}
-                rows={2}
-              />
-            </div>
+
+            {selectedModule === 'new' && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="module-title">Título del Nuevo Módulo *</Label>
+                  <Input
+                    id="module-title"
+                    placeholder="Ej: Fundamentos de Agricultura"
+                    value={moduleTitle}
+                    onChange={(e) => setModuleTitle(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="module-description">Descripción del Módulo (opcional)</Label>
+                  <Textarea
+                    id="module-description"
+                    placeholder="Descripción general del módulo..."
+                    value={moduleDescription}
+                    onChange={(e) => setModuleDescription(e.target.value)}
+                    rows={2}
+                  />
+                </div>
+              </>
+            )}
             <div className="space-y-2">
               <Label htmlFor="lesson-title-save">Título de la Lección *</Label>
               <Input

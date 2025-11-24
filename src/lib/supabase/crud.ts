@@ -66,6 +66,29 @@ export async function createModulo(modulo: Omit<Modulo, 'idmodulo'>) {
   return data as Modulo
 }
 
+export async function updateModulo(idmodulo: number, updates: Partial<Omit<Modulo, 'idmodulo'>>) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('modulos')
+    .update(updates)
+    .eq('idmodulo', idmodulo)
+    .select()
+    .single()
+
+  if (error) throw error
+  return data as Modulo
+}
+
+export async function deleteModulo(idmodulo: number) {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('modulos')
+    .delete()
+    .eq('idmodulo', idmodulo)
+
+  if (error) throw error
+}
+
 // ============================================================================
 // CONTENIDO OPERATIONS
 // ============================================================================
@@ -92,6 +115,29 @@ export async function createContenido(contenido: Omit<Contenido, 'id' | 'idlecci
 
   if (error) throw error
   return data as Contenido
+}
+
+export async function updateContenido(idleccion: number, updates: Partial<Omit<Contenido, 'id' | 'idleccion' | 'created_at'>>) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('contenido')
+    .update(updates)
+    .eq('idleccion', idleccion)
+    .select()
+    .single()
+
+  if (error) throw error
+  return data as Contenido
+}
+
+export async function deleteContenido(idleccion: number) {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('contenido')
+    .delete()
+    .eq('idleccion', idleccion)
+
+  if (error) throw error
 }
 
 // ============================================================================
@@ -161,6 +207,29 @@ export async function createParrafosBatch(parrafos: Omit<Parrafo, 'id'>[]) {
 
   if (error) throw error
   return data as Parrafo[]
+}
+
+export async function updateParrafo(id: number, texto: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from('parrafos')
+    .update({ texto })
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) throw error
+  return data as Parrafo
+}
+
+export async function deleteParrafo(id: number) {
+  const supabase = await createClient()
+  const { error } = await supabase
+    .from('parrafos')
+    .delete()
+    .eq('id', id)
+
+  if (error) throw error
 }
 
 // ============================================================================
