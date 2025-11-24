@@ -1,8 +1,8 @@
-// API Routes for individual Module operations
+// Rutas de API para operaciones de Módulos individuales
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-// GET single module with its lessons
+// GET obtener un módulo individual con sus lecciones
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -20,7 +20,7 @@ export async function GET(
 
     const supabase = await createClient()
 
-    // Get module
+    // Obtener módulo
     const { data: modulo, error: moduloError } = await supabase
       .from('modulos')
       .select('*')
@@ -29,7 +29,7 @@ export async function GET(
 
     if (moduloError) throw moduloError
 
-    // Get lessons with contenido
+    // Obtener lecciones con contenido
     const { data: lecciones, error: leccionesError } = await supabase
       .from('leccion')
       .select(`
@@ -48,16 +48,16 @@ export async function GET(
         lecciones,
       },
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching module:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }
 }
 
-// PUT update module
+// PUT actualizar módulo
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -98,16 +98,16 @@ export async function PUT(
     if (error) throw error
 
     return NextResponse.json({ success: true, data })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error updating module:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }
 }
 
-// DELETE module
+// DELETE eliminar módulo
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -125,7 +125,7 @@ export async function DELETE(
 
     const supabase = await createClient()
 
-    // Note: This will cascade delete related lessons if foreign key is set up with ON DELETE CASCADE
+    // Nota: Esto eliminará en cascada las lecciones relacionadas si la clave foránea está configurada con ON DELETE CASCADE
     const { error } = await supabase
       .from('modulos')
       .delete()
@@ -134,10 +134,10 @@ export async function DELETE(
     if (error) throw error
 
     return NextResponse.json({ success: true })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error deleting module:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }

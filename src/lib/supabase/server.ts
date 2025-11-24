@@ -1,4 +1,4 @@
-// Supabase client for server-side operations (API routes, Server Components)
+// Cliente de Supabase para operaciones del lado del servidor (rutas API, Server Components)
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
@@ -19,9 +19,9 @@ export async function createClient() {
               cookieStore.set(name, value, options)
             )
           } catch {
-            // The `setAll` method was called from a Server Component.
-            // This can be ignored if you have middleware refreshing
-            // user sessions.
+            // El método `setAll` fue llamado desde un Server Component.
+            // Esto se puede ignorar si tienes middleware actualizando
+            // las sesiones de usuario.
           }
         },
       },
@@ -29,7 +29,7 @@ export async function createClient() {
   )
 }
 
-// Service role client for admin operations (use with caution)
+// Cliente con rol de servicio para operaciones de administrador (usar con precaución)
 export async function createServiceClient() {
   const cookieStore = await cookies()
 
@@ -47,7 +47,7 @@ export async function createServiceClient() {
               cookieStore.set(name, value, options)
             )
           } catch {
-            // Service client doesn't need to set cookies
+            // El cliente de servicio no necesita establecer cookies
           }
         },
       },

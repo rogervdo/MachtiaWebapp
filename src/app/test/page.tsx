@@ -10,7 +10,7 @@ export default function TestPage() {
       const supabase = createClient()
       console.log('✅ Supabase client created successfully')
 
-      // Test a simple query
+      // Probar una consulta simple
       const { data, error } = await supabase.auth.getSession()
 
       if (error) {

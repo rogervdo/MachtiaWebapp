@@ -20,17 +20,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
-  // Create Supabase client once
+  // Crear cliente de Supabase una sola vez
   const [supabase] = useState(() => createClient())
 
   useEffect(() => {
-    // Check active session
+    // Verificar sesión activa
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       setLoading(false)
     })
 
-    // Listen for auth changes
+    // Escuchar cambios de autenticación
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {

@@ -122,7 +122,7 @@ export default function CreateLessonView({ selectedModuleId }: CreateLessonViewP
       return
     }
 
-    // Determine if we're using an existing module or creating a new one
+    // Determinar si estamos usando un módulo existente o creando uno nuevo
     const isNewModule = selectedModule === 'new'
 
     if (isNewModule && !moduleTitle.trim()) {
@@ -161,7 +161,7 @@ export default function CreateLessonView({ selectedModuleId }: CreateLessonViewP
       toast.success(`Lección guardada exitosamente! ${result.data.parrafosCreated} fragmentos creados.`)
       setShowSaveDialog(false)
 
-      // Optionally reset form after successful save
+      // Opcionalmente reiniciar el formulario después de guardar exitosamente
       // handleReset()
     } catch (error) {
       toast.error(
@@ -184,7 +184,7 @@ export default function CreateLessonView({ selectedModuleId }: CreateLessonViewP
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {/* Lesson Info */}
+          {/* Información de la Lección */}
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="title">Título de la lección (opcional)</Label>
@@ -207,7 +207,7 @@ export default function CreateLessonView({ selectedModuleId }: CreateLessonViewP
             </div>
           </div>
 
-          {/* Source Type Tabs */}
+          {/* Pestañas de Tipo de Origen */}
           <Tabs value={sourceType} onValueChange={(v) => setSourceType(v as SourceType)}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="youtube">YouTube</TabsTrigger>
@@ -246,7 +246,7 @@ export default function CreateLessonView({ selectedModuleId }: CreateLessonViewP
             </TabsContent>
           </Tabs>
 
-          {/* Text Cleaning Option */}
+          {/* Opción de Limpieza de Texto */}
           <div className="flex items-center space-x-2">
             <input
               type="checkbox"
@@ -260,7 +260,7 @@ export default function CreateLessonView({ selectedModuleId }: CreateLessonViewP
             </Label>
           </div>
 
-          {/* Process Button */}
+          {/* Botón de Procesar */}
           <Button
             onClick={handleProcess}
             disabled={processing}
@@ -272,7 +272,7 @@ export default function CreateLessonView({ selectedModuleId }: CreateLessonViewP
         </CardContent>
       </Card>
 
-      {/* Processed Content Preview */}
+      {/* Vista Previa del Contenido Procesado */}
       {processedContent && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
@@ -287,7 +287,7 @@ export default function CreateLessonView({ selectedModuleId }: CreateLessonViewP
             </div>
           </div>
 
-          {/* Statistics */}
+          {/* Estadísticas */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg">Estadísticas</CardTitle>
@@ -318,12 +318,12 @@ export default function CreateLessonView({ selectedModuleId }: CreateLessonViewP
             </CardContent>
           </Card>
 
-          {/* Chunk Preview */}
+          {/* Vista Previa de Fragmentos */}
           <ChunkPreview chunks={processedContent.chunks} />
         </div>
       )}
 
-      {/* Save to Database Dialog */}
+      {/* Diálogo de Guardar en Base de Datos */}
       <Dialog open={showSaveDialog} onOpenChange={setShowSaveDialog}>
         <DialogContent className="sm:max-w-[525px]">
           <DialogHeader>

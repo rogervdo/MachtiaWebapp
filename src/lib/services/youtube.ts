@@ -1,4 +1,4 @@
-// YouTube transcript extraction service
+// Servicio de extracción de transcripciones de YouTube
 import { YoutubeTranscript } from 'youtube-transcript'
 import type { YouTubeTranscript as YouTubeTranscriptType } from '@/types/database'
 
@@ -14,14 +14,14 @@ export class YouTubeService {
   ]
 
   /**
-   * Validates if a string is a valid YouTube URL
+   * Valida si una cadena es una URL válida de YouTube
    */
   static isValidYouTubeUrl(url: string): boolean {
     return this.YOUTUBE_URL_PATTERNS.some(pattern => pattern.test(url))
   }
 
   /**
-   * Extracts video ID from YouTube URL
+   * Extrae el ID del video de una URL de YouTube
    */
   static extractVideoId(url: string): string | null {
     const match = url.match(this.YOUTUBE_URL_PATTERNS[0])
@@ -29,8 +29,8 @@ export class YouTubeService {
   }
 
   /**
-   * Fetches transcript from YouTube video
-   * Prioritizes Spanish subtitles, falls back to auto-generated or English
+   * Obtiene la transcripción de un video de YouTube
+   * Prioriza subtítulos en español, recurre a autogenerados o inglés
    */
   static async getTranscript(url: string): Promise<YouTubeTranscriptType> {
     if (!this.isValidYouTubeUrl(url)) {
@@ -43,19 +43,19 @@ export class YouTubeService {
     }
 
     try {
-      // Try to fetch transcript with Spanish preference
+      // Intentar obtener transcripción con preferencia de español
       const transcriptData = await YoutubeTranscript.fetchTranscript(videoId, {
         lang: 'es',
       })
 
-      // Combine all segments into full text
+      // Combinar todos los segmentos en texto completo
       const fullTranscript = transcriptData
         .map((segment: TranscriptSegment) => segment.text)
         .join(' ')
-        .replace(/\s+/g, ' ') // Normalize whitespace
+        .replace(/\s+/g, ' ') // Normalizar espacios en blanco
         .trim()
 
-      // Calculate total duration
+      // Calcular duración total
       const duration = transcriptData.length > 0
         ? Math.max(...transcriptData.map((s: TranscriptSegment) => s.offset + s.duration))
         : 0
@@ -67,7 +67,7 @@ export class YouTubeService {
         language: 'es',
       }
     } catch (error) {
-      // Try fallback to auto-generated or any available language
+      // Intentar con autogenerados o cualquier idioma disponible
       try {
         const transcriptData = await YoutubeTranscript.fetchTranscript(videoId)
 
@@ -97,8 +97,8 @@ export class YouTubeService {
   }
 
   /**
-   * Gets metadata about a YouTube video (title extraction would require additional API)
-   * For now, returns basic info
+   * Obtiene metadatos sobre un video de YouTube (la extracción del título requeriría API adicional)
+   * Por ahora, devuelve información básica
    */
   static getVideoInfo(url: string) {
     const videoId = this.extractVideoId(url)

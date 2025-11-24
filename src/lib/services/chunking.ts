@@ -1,5 +1,5 @@
-// Smart text chunking service
-// Ported from Swift MachtiaDesktop ChunkingService
+// Servicio inteligente de división de texto
+// Portado desde ChunkingService de MachtiaDesktop en Swift
 import type { TextChunk } from '@/types/database'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -14,13 +14,13 @@ export class ChunkingService {
   private static readonly DEFAULT_OPTIONS: ChunkingOptions = {
     minWords: 200,
     maxWords: 600,
-    targetWords: 400, // Sweet spot: 300-500 words
-    overlapSentences: 1, // 1 sentence overlap between chunks
+    targetWords: 400, // Punto ideal: 300-500 palabras
+    overlapSentences: 1, // Superposición de 1 oración entre fragmentos
   }
 
   /**
-   * Chunks text into segments of 300-500 words with sentence boundary detection
-   * and 1-sentence overlap between chunks
+   * Divide el texto en segmentos de 300-500 palabras con detección de límites de oraciones
+   * y superposición de 1 oración entre fragmentos
    */
   static chunkText(
     text: string,
@@ -28,16 +28,16 @@ export class ChunkingService {
   ): TextChunk[] {
     const opts = { ...this.DEFAULT_OPTIONS, ...options }
 
-    // Step 1: Normalize text (clean whitespace, preserve paragraphs)
+    // Paso 1: Normalizar texto (limpiar espacios en blanco, preservar párrafos)
     const normalizedText = this.normalizeText(text)
 
-    // Step 2: Split into sentences
+    // Paso 2: Dividir en oraciones
     const sentences = this.splitIntoSentences(normalizedText)
 
-    // Step 3: Build chunks respecting sentence boundaries
+    // Paso 3: Construir fragmentos respetando límites de oraciones
     const chunks = this.buildChunks(sentences, opts)
 
-    // Step 4: Add quality indicators
+    // Paso 4: Agregar indicadores de calidad
     return chunks.map((chunk, index) => ({
       ...chunk,
       position: index,
@@ -46,22 +46,22 @@ export class ChunkingService {
   }
 
   /**
-   * Normalizes text: cleans whitespace, preserves paragraphs
+   * Normaliza el texto: limpia espacios en blanco, preserva párrafos
    */
   private static normalizeText(text: string): string {
     return text
-      .replace(/\r\n/g, '\n') // Normalize line breaks
-      .replace(/\n{3,}/g, '\n\n') // Max 2 consecutive newlines
-      .replace(/[ \t]+/g, ' ') // Normalize spaces/tabs
+      .replace(/\r\n/g, '\n') // Normalizar saltos de línea
+      .replace(/\n{3,}/g, '\n\n') // Máximo 2 saltos de línea consecutivos
+      .replace(/[ \t]+/g, ' ') // Normalizar espacios/tabulaciones
       .trim()
   }
 
   /**
-   * Splits text into sentences (Spanish & English regex)
-   * Handles common abbreviations to avoid false splits
+   * Divide el texto en oraciones (regex para español e inglés)
+   * Maneja abreviaturas comunes para evitar divisiones falsas
    */
   private static splitIntoSentences(text: string): string[] {
-    // Common abbreviations that shouldn't split sentences
+    // Abreviaturas comunes que no deberían dividir oraciones
     const protectedAbbreviations = [
       'Sr.', 'Sra.', 'Dr.', 'Dra.', 'Prof.', 'Profa.',
       'Mr.', 'Mrs.', 'Dr.', 'Prof.',
@@ -70,18 +70,18 @@ export class ChunkingService {
 
     let processedText = text
 
-    // Temporarily replace abbreviations
+    // Reemplazar temporalmente las abreviaturas
     protectedAbbreviations.forEach((abbr, index) => {
       const placeholder = `__ABBR${index}__`
       processedText = processedText.replace(new RegExp(abbr.replace('.', '\\.'), 'g'), placeholder)
     })
 
-    // Split on sentence boundaries: . ! ? followed by space and capital letter
-    // or newline
+    // Dividir en límites de oración: . ! ? seguido de espacio y letra mayúscula
+    // o salto de línea
     const sentenceRegex = /([.!?])\s+(?=[A-ZÁÉÍÓÚÑ])|([.!?])\n/g
     const segments = processedText.split(sentenceRegex).filter(Boolean)
 
-    // Reconstruct sentences
+    // Reconstruir oraciones
     const sentences: string[] = []
     let currentSentence = ''
 
@@ -101,7 +101,7 @@ export class ChunkingService {
       sentences.push(currentSentence.trim())
     }
 
-    // Restore abbreviations
+    // Restaurar abreviaturas
     return sentences.map(sentence => {
       let restored = sentence
       protectedAbbreviations.forEach((abbr, index) => {
@@ -113,7 +113,7 @@ export class ChunkingService {
   }
 
   /**
-   * Builds chunks from sentences respecting word count targets and adding overlap
+   * Construye fragmentos a partir de oraciones respetando objetivos de conteo de palabras y agregando superposición
    */
   private static buildChunks(
     sentences: string[],
@@ -128,12 +128,12 @@ export class ChunkingService {
       const sentence = sentences[i]
       const sentenceWordCount = this.countWords(sentence)
 
-      // Check if adding this sentence would exceed max words
+      // Verificar si agregar esta oración excedería el máximo de palabras
       if (
         currentWordCount + sentenceWordCount > options.maxWords &&
         currentChunk.length > 0
       ) {
-        // Finalize current chunk
+        // Finalizar fragmento actual
         const chunkText = currentChunk.join(' ')
         chunks.push({
           id: uuidv4(),
@@ -142,21 +142,21 @@ export class ChunkingService {
           hasOverlap: previousOverlapSentences.length > 0,
         })
 
-        // Save last N sentences for overlap with next chunk
+        // Guardar las últimas N oraciones para superposición con el siguiente fragmento
         const overlapStart = Math.max(0, currentChunk.length - options.overlapSentences)
         previousOverlapSentences = currentChunk.slice(overlapStart)
 
-        // Start new chunk with overlap
+        // Iniciar nuevo fragmento con superposición
         currentChunk = [...previousOverlapSentences, sentence]
         currentWordCount = this.countWords(currentChunk.join(' '))
       } else {
-        // Add sentence to current chunk
+        // Agregar oración al fragmento actual
         currentChunk.push(sentence)
         currentWordCount += sentenceWordCount
       }
     }
 
-    // Add final chunk
+    // Agregar fragmento final
     if (currentChunk.length > 0) {
       chunks.push({
         id: uuidv4(),
@@ -170,7 +170,7 @@ export class ChunkingService {
   }
 
   /**
-   * Counts words in a text string
+   * Cuenta las palabras en una cadena de texto
    */
   static countWords(text: string): number {
     return text
@@ -180,10 +180,10 @@ export class ChunkingService {
   }
 
   /**
-   * Determines chunk quality based on word count
-   * - ideal: 300-500 words (green)
-   * - short: <300 words (orange)
-   * - long: >500 words (red)
+   * Determina la calidad del fragmento basándose en el conteo de palabras
+   * - ideal: 300-500 palabras (verde)
+   * - corto: <300 palabras (naranja)
+   * - largo: >500 palabras (rojo)
    */
   private static getChunkQuality(
     wordCount: number,
@@ -199,7 +199,7 @@ export class ChunkingService {
   }
 
   /**
-   * Get statistics about chunks
+   * Obtiene estadísticas sobre los fragmentos
    */
   static getChunkStatistics(chunks: TextChunk[]) {
     const totalWords = chunks.reduce((sum, chunk) => sum + chunk.wordCount, 0)

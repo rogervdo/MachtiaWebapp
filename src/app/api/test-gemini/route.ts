@@ -1,4 +1,4 @@
-// API Route: Test Gemini API and list available models
+// Ruta de API: Probar API de Gemini y listar modelos disponibles
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 
@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
 
     const genAI = new GoogleGenerativeAI(apiKey)
 
-    // Test with a simple model initialization
+    // Probar con una inicialización simple del modelo
     const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
 
     return NextResponse.json({

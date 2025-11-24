@@ -1,4 +1,4 @@
-// API Route: Save processed lesson to database
+// Ruta de API: Guardar lección procesada en la base de datos
 import { NextRequest, NextResponse } from 'next/server'
 import { saveCompleteLesson } from '@/lib/supabase/crud'
 import type { ApiResponse, SaveLessonRequest, SaveLessonResponse } from '@/types/database'
@@ -7,7 +7,7 @@ export async function POST(request: NextRequest) {
   try {
     const body: SaveLessonRequest = await request.json()
 
-    // Validate required fields
+    // Validar campos requeridos
     if (!body.moduloTitulo || !body.contenidoTitulo) {
       return NextResponse.json<ApiResponse>(
         {
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Save complete lesson structure
+    // Guardar estructura completa de la lección
     const result = await saveCompleteLesson(body)
 
     return NextResponse.json<ApiResponse<SaveLessonResponse>>(

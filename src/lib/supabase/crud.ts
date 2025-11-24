@@ -1,4 +1,4 @@
-// CRUD operations for actual database schema
+// Operaciones CRUD para el esquema real de la base de datos
 import { createClient } from './server'
 import type {
   Usuario,
@@ -12,7 +12,7 @@ import type {
 } from '@/types/database'
 
 // ============================================================================
-// USER OPERATIONS
+// OPERACIONES DE USUARIO
 // ============================================================================
 
 export async function getUser(userId: string) {
@@ -28,7 +28,7 @@ export async function getUser(userId: string) {
 }
 
 // ============================================================================
-// MODULE OPERATIONS
+// OPERACIONES DE MÓDULO
 // ============================================================================
 
 export async function getModulos() {
@@ -90,7 +90,7 @@ export async function deleteModulo(idmodulo: number) {
 }
 
 // ============================================================================
-// CONTENIDO OPERATIONS
+// OPERACIONES DE CONTENIDO
 // ============================================================================
 
 export async function getContenido(idleccion: number) {
@@ -141,7 +141,7 @@ export async function deleteContenido(idleccion: number) {
 }
 
 // ============================================================================
-// LECCION OPERATIONS (Junction table)
+// OPERACIONES DE LECCIÓN (Tabla de unión)
 // ============================================================================
 
 export async function getLeccionesByModulo(idmodulo: number) {
@@ -171,7 +171,7 @@ export async function createLeccion(leccion: Omit<Leccion, 'id'>) {
 }
 
 // ============================================================================
-// PARRAFO OPERATIONS (Text Chunks)
+// OPERACIONES DE PÁRRAFO (Fragmentos de Texto)
 // ============================================================================
 
 export async function getParrafosByLeccion(idLeccion: number) {
@@ -233,7 +233,7 @@ export async function deleteParrafo(id: number) {
 }
 
 // ============================================================================
-// PREGUNTA OPERATIONS
+// OPERACIONES DE PREGUNTA
 // ============================================================================
 
 export async function getPreguntasByLeccion(idleccion: number) {
@@ -260,15 +260,15 @@ export async function createPregunta(pregunta: Omit<Pregunta, 'idpregunta'>) {
 }
 
 // ============================================================================
-// COMPLETE LESSON CREATION WORKFLOW
+// FLUJO COMPLETO DE CREACIÓN DE LECCIÓN
 // ============================================================================
 
 /**
- * Creates a complete lesson structure:
- * 1. Create or use existing module
- * 2. Create contenido entry
- * 3. Create leccion junction entry
- * 4. Create parrafos (text chunks) in batch
+ * Crea una estructura completa de lección:
+ * 1. Crear o usar módulo existente
+ * 2. Crear entrada de contenido
+ * 3. Crear entrada de unión de lección
+ * 4. Crear párrafos (fragmentos de texto) por lote
  */
 export async function saveCompleteLesson(
   request: SaveLessonRequest
@@ -276,7 +276,7 @@ export async function saveCompleteLesson(
   const supabase = await createClient()
 
   try {
-    // Step 1: Create or use existing module
+    // Paso 1: Crear o usar módulo existente
     let moduloId = request.moduloId
     if (!moduloId) {
       const newModulo = await createModulo({
@@ -286,7 +286,7 @@ export async function saveCompleteLesson(
       moduloId = newModulo.idmodulo
     }
 
-    // Step 2: Get next orden value for this module
+    // Paso 2: Obtener el siguiente valor de orden para este módulo
     const { data: existingLecciones } = await supabase
       .from('leccion')
       .select('contenido:idleccion(orden)')
@@ -294,11 +294,13 @@ export async function saveCompleteLesson(
       .order('contenido(orden)', { ascending: false })
       .limit(1)
 
-    const nextOrden = existingLecciones && existingLecciones.length > 0
-      ? ((existingLecciones[0] as any).contenido?.orden || 0) + 1
-      : 0
+    let nextOrden = 0
+    if (existingLecciones && existingLecciones.length > 0) {
+      const firstLeccion = existingLecciones[0] as unknown as { contenido: { orden: number } | null }
+      nextOrden = (firstLeccion.contenido?.orden || 0) + 1
+    }
 
-    // Step 3: Create contenido entry (idleccion will be auto-generated)
+    // Paso 3: Crear entrada de contenido (idleccion se generará automáticamente)
     const contenido = await createContenido({
       titulo: request.contenidoTitulo,
       descripcion: request.contenidoDescripcion,
@@ -307,13 +309,13 @@ export async function saveCompleteLesson(
       orden: nextOrden,
     })
 
-    // Step 4: Create leccion junction entry
+    // Paso 4: Crear entrada de unión de lección
     const leccion = await createLeccion({
       idleccion: contenido.idleccion,
       idmodulo: moduloId,
     })
 
-    // Step 5: Create parrafos (text chunks) in batch
+    // Paso 5: Crear párrafos (fragmentos de texto) por lote
     const parrafosToCreate = request.chunks.map((chunk) => ({
       idLeccion: contenido.idleccion,
       texto: chunk.texto,
@@ -334,11 +336,11 @@ export async function saveCompleteLesson(
 }
 
 // ============================================================================
-// HELPER FUNCTIONS
+// FUNCIONES AUXILIARES
 // ============================================================================
 
 /**
- * Gets complete lesson data with all related tables
+ * Obtiene datos completos de lección con todas las tablas relacionadas
  */
 export async function getCompleteLessonData(idleccion: number) {
   const supabase = await createClient()
@@ -357,7 +359,7 @@ export async function getCompleteLessonData(idleccion: number) {
 }
 
 /**
- * Gets all lessons for a module with their content
+ * Obtiene todas las lecciones de un módulo con su contenido
  */
 export async function getModuleWithLessons(idmodulo: number) {
   const [modulo, lecciones] = await Promise.all([

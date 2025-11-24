@@ -1,8 +1,8 @@
-// API Routes for Parrafo operations
+// Rutas de API para operaciones de Párrafos
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-// POST create new parrafos (batch)
+// POST crear nuevos párrafos (por lote)
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -17,9 +17,9 @@ export async function POST(request: NextRequest) {
 
     const supabase = await createClient()
 
-    const parrafosToCreate = parrafos.map((p: any) => ({
+    const parrafosToCreate = parrafos.map((p: { texto?: string; text?: string }) => ({
       idLeccion,
-      texto: p.texto || p.text,
+      texto: p.texto || p.text || '',
     }))
 
     const { data, error } = await supabase
@@ -33,16 +33,16 @@ export async function POST(request: NextRequest) {
       success: true,
       data,
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating parrafos:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }
 }
 
-// DELETE parrafo
+// DELETE eliminar párrafo
 export async function DELETE(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
@@ -73,10 +73,10 @@ export async function DELETE(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json({ success: true })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error deleting parrafo:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }

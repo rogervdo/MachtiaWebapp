@@ -1,4 +1,4 @@
-// API Route: Chunk text into segments
+// Ruta de API: Dividir texto en segmentos
 import { NextRequest, NextResponse } from 'next/server'
 import { ChunkingService } from '@/lib/services/chunking'
 import type { ApiResponse, ChunkingResponse } from '@/types/database'
@@ -28,10 +28,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Chunk text with optional custom options
+    // Dividir texto con opciones personalizadas opcionales
     const chunks = ChunkingService.chunkText(text, options)
 
-    // Get statistics
+    // Obtener estadísticas
     const stats = ChunkingService.getChunkStatistics(chunks)
 
     return NextResponse.json<ApiResponse<ChunkingResponse>>(

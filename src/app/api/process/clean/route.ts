@@ -1,4 +1,4 @@
-// API Route: Clean text with Gemini
+// Ruta de API: Limpiar texto con Gemini
 import { NextRequest, NextResponse } from 'next/server'
 import { createGeminiService } from '@/lib/services/gemini'
 import type { ApiResponse } from '@/types/database'
@@ -35,10 +35,10 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create Gemini service
+    // Crear servicio de Gemini
     const geminiService = createGeminiService()
 
-    // Clean text
+    // Limpiar texto
     const result = await geminiService.cleanText(text)
 
     return NextResponse.json<ApiResponse<CleanTextResponse>>(

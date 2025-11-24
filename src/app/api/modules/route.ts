@@ -1,9 +1,9 @@
-// API Routes for Module CRUD operations
+// Rutas de API para operaciones CRUD de Módulos
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import type { Modulo } from '@/types/database'
 
-// GET all modules
+// GET obtener todos los módulos
 export async function GET() {
   try {
     const supabase = await createClient()
@@ -16,16 +16,16 @@ export async function GET() {
     if (error) throw error
 
     return NextResponse.json({ success: true, data })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching modules:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }
 }
 
-// POST create new module
+// POST crear nuevo módulo
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -52,10 +52,10 @@ export async function POST(request: NextRequest) {
     if (error) throw error
 
     return NextResponse.json({ success: true, data })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating module:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }

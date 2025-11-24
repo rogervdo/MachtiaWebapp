@@ -70,8 +70,8 @@ export function ContenidoDetailView({ contenidoId, onBack }: ContenidoDetailView
   }
 
   const handleSaveParrafo = async (parrafoId: number) => {
-    // Note: This would require an API endpoint for updating parrafos
-    // For now, we'll just show a toast
+    // Nota: Esto requeriría un endpoint de API para actualizar párrafos
+    // Por ahora, solo mostraremos un mensaje
     toast.info('Función de edición próximamente')
     setEditingParrafoId(null)
   }
@@ -133,7 +133,7 @@ export function ContenidoDetailView({ contenidoId, onBack }: ContenidoDetailView
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
+      {/* Encabezado */}
       <div className="border-b pb-6 mb-6">
         <Button
           variant="ghost"
@@ -156,7 +156,7 @@ export function ContenidoDetailView({ contenidoId, onBack }: ContenidoDetailView
           </div>
         </div>
 
-        {/* Stats */}
+        {/* Estadísticas */}
         <div className="grid grid-cols-3 gap-4 mt-4">
           <div className="bg-muted rounded-lg p-4">
             <div className="flex items-center gap-2 mb-1">
@@ -182,7 +182,7 @@ export function ContenidoDetailView({ contenidoId, onBack }: ContenidoDetailView
         </div>
       </div>
 
-      {/* Parrafos List */}
+      {/* Lista de Párrafos */}
       <div className="flex-1 overflow-auto">
         {parrafos.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-center">
@@ -215,7 +215,7 @@ export function ContenidoDetailView({ contenidoId, onBack }: ContenidoDetailView
         )}
       </div>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Diálogo de Confirmación de Eliminación */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
           <DialogHeader>

@@ -1,4 +1,4 @@
-// Supabase client for browser-side operations
+// Cliente de Supabase para operaciones del lado del navegador
 import { createBrowserClient } from '@supabase/ssr'
 
 export function createClient() {

@@ -1,8 +1,8 @@
-// API Routes for individual Contenido operations
+// Rutas de API para operaciones de Contenido individual
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 
-// GET single contenido with parrafos and preguntas
+// GET obtener un contenido individual con párrafos y preguntas
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -20,7 +20,7 @@ export async function GET(
 
     const supabase = await createClient()
 
-    // Get contenido
+    // Obtener contenido
     const { data: contenido, error: contenidoError } = await supabase
       .from('contenido')
       .select('*')
@@ -29,7 +29,7 @@ export async function GET(
 
     if (contenidoError) throw contenidoError
 
-    // Get parrafos
+    // Obtener párrafos
     const { data: parrafos, error: parrafosError } = await supabase
       .from('parrafos')
       .select('*')
@@ -38,7 +38,7 @@ export async function GET(
 
     if (parrafosError) throw parrafosError
 
-    // Get preguntas
+    // Obtener preguntas
     const { data: preguntas, error: preguntasError } = await supabase
       .from('pregunta')
       .select('*')
@@ -54,16 +54,16 @@ export async function GET(
         preguntas,
       },
     })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error fetching contenido:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }
 }
 
-// PUT update contenido
+// PUT actualizar contenido
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -91,7 +91,13 @@ export async function PUT(
 
     const supabase = await createClient()
 
-    const updateData: any = {
+    const updateData: {
+      titulo: string
+      descripcion?: string
+      tipo: 'lesson' | 'video' | 'document' | 'quiz'
+      video_url?: string
+      orden?: number
+    } = {
       titulo,
       descripcion,
       tipo,
@@ -112,16 +118,16 @@ export async function PUT(
     if (error) throw error
 
     return NextResponse.json({ success: true, data })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error updating contenido:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }
 }
 
-// DELETE contenido
+// DELETE eliminar contenido
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -139,7 +145,7 @@ export async function DELETE(
 
     const supabase = await createClient()
 
-    // Delete contenido (cascades to parrafos, preguntas, and leccion junction)
+    // Eliminar contenido (elimina en cascada párrafos, preguntas y unión de lección)
     const { error } = await supabase
       .from('contenido')
       .delete()
@@ -148,10 +154,10 @@ export async function DELETE(
     if (error) throw error
 
     return NextResponse.json({ success: true })
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error deleting contenido:', error)
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: error instanceof Error ? error.message : 'Error desconocido' },
       { status: 500 }
     )
   }

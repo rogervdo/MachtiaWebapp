@@ -39,12 +39,12 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith('/signup')
   const isProtectedPage = request.nextUrl.pathname.startsWith('/dashboard')
 
-  // Redirect to dashboard if authenticated user tries to access auth pages
+  // Redirigir al dashboard si el usuario autenticado intenta acceder a páginas de autenticación
   if (isAuthPage && user) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
-  // Redirect to login if unauthenticated user tries to access protected pages
+  // Redirigir al login si el usuario no autenticado intenta acceder a páginas protegidas
   if (isProtectedPage && !user) {
     return NextResponse.redirect(new URL('/login', request.url))
   }

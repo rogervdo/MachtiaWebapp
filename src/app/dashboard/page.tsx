@@ -46,7 +46,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      {/* Header */}
+      {/* Encabezado */}
       <header className="border-b bg-white">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div>
@@ -66,7 +66,7 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* Main Content */}
+      {/* Contenido Principal */}
       <main className="container mx-auto p-6">
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="grid w-full max-w-md grid-cols-2">

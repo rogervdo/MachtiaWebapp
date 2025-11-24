@@ -1,18 +1,18 @@
-// Database Types - Matching actual Supabase schema
+// Tipos de Base de Datos - Corresponden al esquema real de Supabase
 
 // ============================================================================
-// PUBLIC SCHEMA TABLES
+// TABLAS DEL ESQUEMA PÚBLICO
 // ============================================================================
 
 export interface Usuario {
-  id: string; // uuid (links to auth.users)
+  id: string; // uuid (enlaza con auth.users)
   nombre: string;
   apellidos: string;
-  email: string; // unique
+  email: string; // único
   fecha_nac: Date;
   rol: number;
   idgerente?: number;
-  imagendir: string; // default 'default.jpg'
+  imagendir: string; // por defecto 'default.jpg'
 }
 
 export interface IdRol {
@@ -40,26 +40,26 @@ export interface Contenido {
   descripcion?: string;
   tipo: 'lesson' | 'video' | 'document' | 'quiz';
   video_url?: string;
-  orden: number; // default 0
+  orden: number; // por defecto 0
   created_at?: Date;
-  id: number; // GENERATED ALWAYS AS IDENTITY
+  id: number; // GENERADO SIEMPRE COMO IDENTIDAD
 }
 
 export interface Leccion {
-  id: number; // PK, GENERATED ALWAYS AS IDENTITY
-  idleccion: number; // FK to contenido
-  idmodulo?: number; // FK to modulos
+  id: number; // PK, GENERADO SIEMPRE COMO IDENTIDAD
+  idleccion: number; // FK a contenido
+  idmodulo?: number; // FK a modulos
 }
 
 export interface Parrafo {
-  id: number; // bigint, GENERATED ALWAYS AS IDENTITY
-  idLeccion: number; // FK to contenido
+  id: number; // bigint, GENERADO SIEMPRE COMO IDENTIDAD
+  idLeccion: number; // FK a contenido
   texto?: string;
 }
 
 export interface Pregunta {
   idpregunta: number;
-  idleccion?: number; // FK to contenido
+  idleccion?: number; // FK a contenido
   pregunta: string;
   tipopregunta?: string;
   respuesta1?: string;
@@ -71,7 +71,7 @@ export interface Pregunta {
 export interface LeccionUsuario {
   idusuario: string; // uuid
   idleccion: number;
-  completado?: boolean; // default false
+  completado?: boolean; // por defecto false
   fechacompletado?: Date;
 }
 
@@ -88,7 +88,7 @@ export interface Imagen {
 }
 
 // ============================================================================
-// APPLICATION-SPECIFIC TYPES
+// TIPOS ESPECÍFICOS DE LA APLICACIÓN
 // ============================================================================
 
 export interface TextChunk {
@@ -116,25 +116,28 @@ export interface ProcessedContent {
     totalWords: number;
     totalChunks: number;
     processingTime?: number;
-    [key: string]: any;
+    duration?: number;
+    language?: string;
+    title?: string;
+    averageWordsPerChunk?: number;
   };
 }
 
 // ============================================================================
-// FORM TYPES
+// TIPOS DE FORMULARIOS
 // ============================================================================
 
 export interface CreateLessonForm {
   title: string;
   description?: string;
   sourceType: 'youtube' | 'text';
-  sourceContent: string; // URL or text content
+  sourceContent: string; // URL o contenido de texto
   useTextCleaning: boolean;
   targetModule?: number;
 }
 
 export interface SaveLessonRequest {
-  moduloId?: number; // If null, create new module
+  moduloId?: number; // Si es null, crear nuevo módulo
   moduloTitulo: string;
   moduloDescripcion?: string;
   contenidoTitulo: string;
@@ -145,7 +148,7 @@ export interface SaveLessonRequest {
 }
 
 // ============================================================================
-// API RESPONSE TYPES
+// TIPOS DE RESPUESTA DE LA API
 // ============================================================================
 
 export interface ApiResponse<T = unknown> {
@@ -180,7 +183,7 @@ export interface SaveLessonResponse {
 }
 
 // ============================================================================
-// EXTENDED TYPES FOR UI
+// TIPOS EXTENDIDOS PARA LA INTERFAZ DE USUARIO
 // ============================================================================
 
 export interface ModuloWithLecciones extends Modulo {

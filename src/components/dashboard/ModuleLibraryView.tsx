@@ -44,7 +44,7 @@ export function ModuleLibraryView({ onViewModule }: ModuleLibraryViewProps = {})
       const result = await response.json()
 
       if (result.success) {
-        // Load lesson counts for each module
+        // Cargar conteos de lecciones para cada módulo
         const modulesWithLessons = await Promise.all(
           result.data.map(async (module: Modulo) => {
             const detailResponse = await fetch(`/api/modules/${module.idmodulo}`)
@@ -157,7 +157,7 @@ export function ModuleLibraryView({ onViewModule }: ModuleLibraryViewProps = {})
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
+      {/* Encabezado */}
       <div className="border-b pb-6 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -172,7 +172,7 @@ export function ModuleLibraryView({ onViewModule }: ModuleLibraryViewProps = {})
           </Button>
         </div>
 
-        {/* Search Bar */}
+        {/* Barra de Búsqueda */}
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -184,7 +184,7 @@ export function ModuleLibraryView({ onViewModule }: ModuleLibraryViewProps = {})
         </div>
       </div>
 
-      {/* Module List */}
+      {/* Lista de Módulos */}
       <div className="flex-1 overflow-auto">
         {isLoading ? (
           <div className="flex items-center justify-center h-64">
@@ -227,7 +227,7 @@ export function ModuleLibraryView({ onViewModule }: ModuleLibraryViewProps = {})
         )}
       </div>
 
-      {/* Create Module Dialog */}
+      {/* Diálogo de Crear Módulo */}
       <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
         <DialogContent>
           <DialogHeader>
@@ -270,7 +270,7 @@ export function ModuleLibraryView({ onViewModule }: ModuleLibraryViewProps = {})
         </DialogContent>
       </Dialog>
 
-      {/* Edit Module Dialog */}
+      {/* Diálogo de Editar Módulo */}
       <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
         <DialogContent>
           <DialogHeader>
@@ -311,7 +311,7 @@ export function ModuleLibraryView({ onViewModule }: ModuleLibraryViewProps = {})
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Diálogo de Confirmación de Eliminación */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
           <DialogHeader>

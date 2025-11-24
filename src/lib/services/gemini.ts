@@ -1,25 +1,25 @@
-// Gemini API text cleaning service
+// Servicio de limpieza de texto con API de Gemini
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export class GeminiService {
   private genAI: GoogleGenerativeAI;
-  private model: any;
+  private model: ReturnType<GoogleGenerativeAI['getGenerativeModel']>;
 
   constructor(apiKey: string) {
     this.genAI = new GoogleGenerativeAI(apiKey);
     this.model = this.genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash', // Basic stable model
+      model: 'gemini-2.0-flash', // Modelo estable básico
       generationConfig: {
-        temperature: 0.3, // Low temperature for consistent output
+        temperature: 0.3, // Temperatura baja para salida consistente
       },
     });
   }
 
   /**
-   * Cleans text by adding punctuation, capitalization, and formatting
-   * WITHOUT summarizing or changing word count significantly
+   * Limpia el texto agregando puntuación, mayúsculas y formato
+   * SIN resumir o cambiar significativamente el conteo de palabras
    *
-   * Based on Swift TextCleaningService logic
+   * Basado en la lógica de TextCleaningService de Swift
    */
   async cleanText(text: string): Promise<{
     cleanedText: string;
@@ -54,7 +54,7 @@ ${text}`;
       const cleanedWordCount = this.countWords(cleanedText);
       const processingTime = Date.now() - startTime;
 
-      // Verify word count hasn't changed dramatically (within 15% tolerance)
+      // Verificar que el conteo de palabras no haya cambiado drásticamente (tolerancia del 15%)
       const wordCountRatio = cleanedWordCount / originalWordCount;
       if (wordCountRatio < 0.85 || wordCountRatio > 1.15) {
         console.warn(
@@ -78,7 +78,7 @@ ${text}`;
   }
 
   /**
-   * Counts words in a text string
+   * Cuenta las palabras en una cadena de texto
    */
   private countWords(text: string): number {
     return text
@@ -88,7 +88,7 @@ ${text}`;
   }
 
   /**
-   * Test Gemini API connection
+   * Probar conexión con API de Gemini
    */
   async testConnection(): Promise<boolean> {
     try {
@@ -101,7 +101,7 @@ ${text}`;
   }
 }
 
-// Factory function to create service instance
+// Función de fábrica para crear instancia del servicio
 export function createGeminiService() {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {

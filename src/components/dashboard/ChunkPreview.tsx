@@ -44,7 +44,7 @@ export function ChunkPreview({ chunks }: ChunkPreviewProps) {
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-          {/* Chunk List */}
+          {/* Lista de Fragmentos */}
           <div className="space-y-2 lg:col-span-1">
             <div className="max-h-[600px] space-y-2 overflow-y-auto rounded-md border p-2">
               {chunks.map((chunk, index) => (
@@ -79,7 +79,7 @@ export function ChunkPreview({ chunks }: ChunkPreviewProps) {
               ))}
             </div>
 
-            {/* Quality Legend */}
+            {/* Leyenda de Calidad */}
             <div className="space-y-1 rounded-md border bg-neutral-50 p-3 text-sm">
               <p className="font-medium">Calidad:</p>
               <div className="space-y-1">
@@ -105,7 +105,7 @@ export function ChunkPreview({ chunks }: ChunkPreviewProps) {
             </div>
           </div>
 
-          {/* Selected Chunk Detail */}
+          {/* Detalle del Fragmento Seleccionado */}
           <div className="lg:col-span-2">
             {selectedChunk ? (
               <div className="space-y-4">

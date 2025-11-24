@@ -1,5 +1,5 @@
-// API Route: Full processing pipeline
-// YouTube → Extract → Clean (optional) → Chunk → Ready for DB
+// Ruta de API: Pipeline completo de procesamiento
+// YouTube → Extraer → Limpiar (opcional) → Dividir en fragmentos → Listo para BD
 import { NextRequest, NextResponse } from 'next/server'
 import { YouTubeService } from '@/lib/services/youtube'
 import { createGeminiService } from '@/lib/services/gemini'
@@ -8,7 +8,7 @@ import type { ApiResponse, ProcessedContent } from '@/types/database'
 
 interface FullProcessRequest {
   sourceType: 'youtube' | 'text'
-  sourceContent: string // URL or text content
+  sourceContent: string // URL o contenido de texto
   useTextCleaning: boolean
   title?: string
 }
@@ -30,9 +30,13 @@ export async function POST(request: NextRequest) {
 
     const startTime = Date.now()
     let originalText = ''
-    let metadata: any = {}
+    let metadata: {
+      url?: string
+      duration?: number
+      language?: string
+    } = {}
 
-    // Step 1: Get text content
+    // Paso 1: Obtener contenido de texto
     if (sourceType === 'youtube') {
       const transcriptResult = await YouTubeService.getTranscript(sourceContent)
       originalText = transcriptResult.transcript
@@ -45,7 +49,7 @@ export async function POST(request: NextRequest) {
       originalText = sourceContent
     }
 
-    // Step 2: Optional text cleaning with Gemini
+    // Paso 2: Limpieza opcional de texto con Gemini
     let cleanedText: string | undefined
     let cleaningMetadata = {}
 
@@ -60,7 +64,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Step 3: Chunk the text (use cleaned if available, otherwise original)
+    // Paso 3: Dividir el texto en fragmentos (usar el limpio si está disponible, si no el original)
     const textToChunk = cleanedText || originalText
     const chunks = ChunkingService.chunkText(textToChunk)
     const chunkStats = ChunkingService.getChunkStatistics(chunks)

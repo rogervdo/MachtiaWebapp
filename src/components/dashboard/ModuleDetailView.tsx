@@ -135,7 +135,7 @@ export function ModuleDetailView({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Header */}
+      {/* Encabezado */}
       <div className="border-b pb-6 mb-6">
         <Button
           variant="ghost"
@@ -166,7 +166,7 @@ export function ModuleDetailView({
         </div>
       </div>
 
-      {/* Lessons List */}
+      {/* Lista de Lecciones */}
       <div className="flex-1 overflow-auto">
         {lecciones.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 text-center">
@@ -204,7 +204,7 @@ export function ModuleDetailView({
         )}
       </div>
 
-      {/* Delete Confirmation Dialog */}
+      {/* Diálogo de Confirmación de Eliminación */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
           <DialogHeader>
