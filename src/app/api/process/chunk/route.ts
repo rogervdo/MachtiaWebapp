@@ -1,12 +1,12 @@
 // Ruta de API: Dividir texto en segmentos
-import { NextRequest, NextResponse } from 'next/server'
-import { ChunkingService } from '@/lib/services/chunking'
-import type { ApiResponse, ChunkingResponse } from '@/types/database'
+import { ChunkingService } from '@/lib/services/chunking';
+import type { ApiResponse, ChunkingResponse } from '@/types/database';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { text, options } = body
+    const body = await request.json();
+    const { text, options } = body;
 
     if (!text || typeof text !== 'string') {
       return NextResponse.json<ApiResponse>(
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
           error: 'Texto requerido',
         },
         { status: 400 }
-      )
+      );
     }
 
     if (text.trim().length === 0) {
@@ -25,14 +25,14 @@ export async function POST(request: NextRequest) {
           error: 'El texto no puede estar vacío',
         },
         { status: 400 }
-      )
+      );
     }
 
     // Dividir texto con opciones personalizadas opcionales
-    const chunks = ChunkingService.chunkText(text, options)
+    const chunks = ChunkingService.chunkText(text, options);
 
     // Obtener estadísticas
-    const stats = ChunkingService.getChunkStatistics(chunks)
+    const stats = ChunkingService.getChunkStatistics(chunks);
 
     return NextResponse.json<ApiResponse<ChunkingResponse>>(
       {
@@ -47,9 +47,9 @@ export async function POST(request: NextRequest) {
         },
       },
       { status: 200 }
-    )
+    );
   } catch (error) {
-    console.error('Error chunking text:', error)
+    console.error('Error chunking text:', error);
 
     return NextResponse.json<ApiResponse>(
       {
@@ -57,6 +57,7 @@ export async function POST(request: NextRequest) {
         error: error instanceof Error ? error.message : 'Error al dividir el texto en fragmentos',
       },
       { status: 500 }
-    )
+    );
   }
 }
+

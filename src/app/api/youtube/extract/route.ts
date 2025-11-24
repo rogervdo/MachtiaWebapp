@@ -1,12 +1,12 @@
 // Ruta de API: Extraer transcripción de YouTube
-import { NextRequest, NextResponse } from 'next/server'
-import { YouTubeService } from '@/lib/services/youtube'
-import type { ApiResponse, YouTubeExtractResponse } from '@/types/database'
+import { YouTubeService } from '@/lib/services/youtube';
+import type { ApiResponse, YouTubeExtractResponse } from '@/types/database';
+import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { url } = body
+    const body = await request.json();
+    const { url } = body;
 
     if (!url || typeof url !== 'string') {
       return NextResponse.json<ApiResponse>(
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
           error: 'URL de YouTube requerida',
         },
         { status: 400 }
-      )
+      );
     }
 
     // Validar URL de YouTube
@@ -26,11 +26,11 @@ export async function POST(request: NextRequest) {
           error: 'URL de YouTube inválida. Usa: youtube.com/watch?v=..., youtu.be/..., o youtube.com/shorts/...',
         },
         { status: 400 }
-      )
+      );
     }
 
     // Extraer transcripción
-    const result = await YouTubeService.getTranscript(url)
+    const result = await YouTubeService.getTranscript(url);
 
     return NextResponse.json<ApiResponse<YouTubeExtractResponse>>(
       {
@@ -45,9 +45,9 @@ export async function POST(request: NextRequest) {
         },
       },
       { status: 200 }
-    )
+    );
   } catch (error) {
-    console.error('Error extracting YouTube transcript:', error)
+    console.error('Error extracting YouTube transcript:', error);
 
     return NextResponse.json<ApiResponse>(
       {
@@ -55,6 +55,7 @@ export async function POST(request: NextRequest) {
         error: error instanceof Error ? error.message : 'Error al extraer transcripción de YouTube',
       },
       { status: 500 }
-    )
+    );
   }
 }
+
